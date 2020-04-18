@@ -6,8 +6,8 @@
 		"fullscreen": false,
 		"resizable": false,
 		"keepAspectRatio": false,
-		"width": 200,
-		"height": 150,
+		"width": 160,
+		"height": 160,
 		"pixelSize": {
 			"width": 4,
 			"height": 4
@@ -40,12 +40,12 @@
 		]
 	},
 	"controls": {
-		"up": 83,
-		"down": 0,
-		"left": 0,
-		"right": 0,
-		"a": 0,
-		"s": 0
+		"up": 38,
+		"down": 40,
+		"left": 37,
+		"right": 39,
+		"a": 65,
+		"s": 83
 	},
 	"touchEvent": {
 		"multiTouch": false,
