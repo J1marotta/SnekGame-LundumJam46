@@ -20,7 +20,7 @@ const playArea = {
 const hero = {
   x: 0,
   y: 0,
-  speed: 1,
+  speed: 2,
   width: TILE_WIDTH,
   flipH: false,
   image:  153,
@@ -29,8 +29,28 @@ const hero = {
 
 const background = getMap("map");
 paper(7);
+pen(0)
 
-const updateHeroFrames = () => Math.random() > 0.5 ? 153 : 154
+
+
+
+
+const updateHeroFrames = () => {   
+  let i = Math.floor(Math.random() * (8 - 1)) + 1
+
+  const frames = {
+    1: 119,
+    2: 120,
+    3: 121,
+    4: 122,
+    5: 153,
+    6: 154,
+    7: 155,
+    8: 156,
+  }
+  let frame = frames[i]
+  return frame  
+}
  
 const moveHero = () => {
   if (btn.right){
@@ -59,14 +79,20 @@ const moveHero = () => {
   if(hero.x > playArea.Xmax) hero.x = playArea.Xmax;
   if(hero.y < playArea.Ymin ) hero.y = playArea.Ymin;
   if(hero.y > playArea.Ymax) hero.y = playArea.Ymax;
+ 
+  
+  
 }
 
 
 
+
 exports.update = function () {  
+  
   moveHero()
   cls();
   draw(background, 0, 8);
+  print('SNEK', 0, 1)  
   camera(0,0);
   sprite(hero.image, hero.x, hero.y, hero.flipH, );
 };
