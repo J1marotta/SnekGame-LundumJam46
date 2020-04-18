@@ -1,0 +1,11 @@
+
+node_modules
+
+# Ignore Mac OS files
+.DS_Store
+
+# Ignore distrib directory
+distrib
+
+# ignore local tool settings
+/tools/settings.json
