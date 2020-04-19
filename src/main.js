@@ -27,12 +27,18 @@ let dangers = []
 let counter = 0
 let dead = false;
 let score = 0;
+let sounds = false
 
 
 paper(7);
 pen(0)
 
-
+function calculateBoxSpeed(score) {
+  if(score < 2000) {return 5}
+  if(score > 2000 && score < 5000) {return 4}
+  if(score > 5000 && score < 7500) {return 3}
+  if(score > 7500){return 2}
+}
 
 const updateHeroFrames = () => {   
   let i = Math.floor(Math.random() * (8 - 1)) + 1
@@ -54,6 +60,7 @@ const updateHeroFrames = () => {
 
 const moveHero = () => {
   if (btn.right){
+    createBox(warnings)
     hero.x += hero.speed;
     hero.flipH = false;
     hero.image = updateHeroFrames()
@@ -61,6 +68,7 @@ const moveHero = () => {
   }
     
   if (btn.left)  {
+    createBox(warnings)
     hero.x -= hero.speed;
     hero.flipH = true;
     hero.image = updateHeroFrames()  
@@ -68,12 +76,14 @@ const moveHero = () => {
   }
 
   if (btn.up)  {  
+    createBox(warnings)
     hero.y -= hero.speed; 
     hero.image = updateHeroFrames()
     score++
   }
 
   if (btn.down){ 
+    createBox(warnings)
     hero.y += hero.speed;
     hero.image = updateHeroFrames()
     score++ 
@@ -83,29 +93,18 @@ const moveHero = () => {
   if (hero.x > playArea.Xmax) hero.x = playArea.Xmax;
   if (hero.y < playArea.Ymin ) hero.y = playArea.Ymin;
   if (hero.y > playArea.Ymax) hero.y = playArea.Ymax;
+
+  
 }
 
 
-function getRandomIntInclusive(min, max, x) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-
-    let buffer = x ? 8 : 16
-
-    let num = Math.floor(Math.random() * (max - min +  buffer) + min) 
-     if(x && num < playArea.Xmin) num = playArea.Xmin
-     if(x && num > playArea.Xmax) num = playArea.Xmax
-     if(num < playArea.Ymin) num = playArea.Ymin
-     if(num > playArea.Ymax) num = playArea.Ymax
-
-    return num
-}
 
 
 const startDanger = () => {
-  counter ++ 
-  if(counter > 2) {
+  counter++ 
+  if(counter > 1) {
     dangers.push(warnings.shift())
+    sounds && sfx('warning')
     counter = 0
   }
   return dangers
@@ -114,13 +113,13 @@ const startDanger = () => {
 
 const createBox = (warnings) => {
   const tile = {
-    x: getRandomIntInclusive(playArea.Xmin, playArea.Xmax, true),
-    y: getRandomIntInclusive(playArea.Ymin, playArea.Ymax),
+    x: random(playArea.Xmin, playArea.Xmax),
+    y: random(playArea.Ymin, playArea.Ymax),
     width: TILE_WIDTH,
     height: TILE_HEIGHT
   }
 
-  const warning = (Date.now() - timeLastbox) / 1000  >= 5 
+  const warning = (Date.now() - timeLastbox) / 1000  >= calculateBoxSpeed(score)
   
   if (warning) { 
     warnings.push(tile)
@@ -149,6 +148,7 @@ const checkContact = (hero, dangers)  => {
       // distance less than raidus of both they are intersecting
       if (d < hero.width /2 + other.width /2 && !dead){
          dead = true
+         sounds && sfx('dead')
       }
   })
 }
@@ -156,15 +156,17 @@ const checkContact = (hero, dangers)  => {
 
 function resetGame () {
   score = 0
-  dead = false,
+  dead = false
   dangers = []
   warnings = []
   counter = 0
-  timeLastbox = 0;
+  timeLastbox = 0
+  sounds = false
 }
 
 exports.update = function () {
   if(!dead) { 
+    sounds && music('background')
     moveHero();
     cls();
     draw(background, 0, 8);
@@ -172,7 +174,7 @@ exports.update = function () {
     print(score, 140, 1)
     camera(0,0);
     
-    createBox(warnings)
+    // createBox(warnings)
 
     warnings.map( t =>  
         sprite(58, t.x, t.y)
@@ -186,11 +188,14 @@ exports.update = function () {
     checkContact(hero, dangers)
   } else {
       print('Ded', 80, 80)
-      print(`push 'a' to reset`, 60, 100)
+      print(`push a to reset`, 60, 100)
       if(btn.a){
         resetGame()
     }
   }
-  print('Avoid the skulls, move to score', 20, 170)
-
+  print('Avoid skulls, move to score', 35, 170)
+  print(`FX:${ sounds ? 'on' : 'off'}`, 1, 170)
+  if(btn.s){  
+    sounds = !sounds
+  }
 };
